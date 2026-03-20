@@ -7,7 +7,6 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +32,8 @@ public class GitService {
     private void initializeRepository() throws IOException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         repository = builder
-                .setGitDir(new File(".git"))
-                .readEnvironment()
-                .findGitDir()
+                .readEnvironment()  // Read from environment first
+                .findGitDir()       // Let JGit find the .git directory
                 .build();
         git = new Git(repository);
     }

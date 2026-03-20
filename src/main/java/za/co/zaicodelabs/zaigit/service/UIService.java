@@ -42,16 +42,16 @@ public class UIService {
 
     public void printMainMenu() {
         System.out.println(PRIMARY + "\n╔════════════ MAIN MENU ════════════╗" + RESET);
-        System.out.println("  1. 🚀 Smart Push");
-        System.out.println("  2. 📥 Smart Pull");
-        System.out.println("  3. 📊 Status");
-        System.out.println("  4. 🌿 Branch Operations");
-        System.out.println("  5. 📜 Commit History");
-        System.out.println("  6. 💾 Stash Management");
-        System.out.println("  7. ↩️  Undo Last Commit");
-        System.out.println("  8. 🔄 Sync Repository");
-        System.out.println("  9. ⚙️  Settings");
-        System.out.println("  0. Exit");
+        System.out.println("  1.  Smart Push");
+        System.out.println("  2.  Smart Pull");
+        System.out.println("  3.  Status");
+        System.out.println("  4.  Branch Operations");
+        System.out.println("  5.  Commit History");
+        System.out.println("  6.  Stash Management");
+        System.out.println("  7.️ Undo Last Commit");
+        System.out.println("  8.  Sync Repository");
+        System.out.println("  9.  Settings");
+        System.out.println("  0.  Exit");
         System.out.println(PRIMARY + "╚═══════════════════════════════════╝" + RESET);
         System.out.print(ACCENT + "\n→ Choose option: " + RESET);
     }
@@ -63,18 +63,18 @@ public class UIService {
             System.out.println("  No unpushed commits");
         } else {
             for (String commit : commits) {
-                System.out.println("  📌 " + commit);
+                System.out.println("  " + commit);
             }
         }
 
         System.out.println(PRIMARY + "╚═════════════════════════════════════════╝" + RESET);
 
-        System.out.println("\n" + PRIMARY + "📊 File Changes:" + RESET);
+        System.out.println("\n" + PRIMARY + " File Changes:" + RESET);
 
         if (files.isEmpty()) {
             System.out.println("  No changes");
         } else {
-            System.out.println("\n   " + YELLOW + "📝 Changed (" + files.size() + " files):" + RESET);
+            System.out.println("\n   " + YELLOW + " Changed (" + files.size() + " files):" + RESET);
             files.forEach(f -> System.out.println("      • " + f));
             System.out.println("\n   Total: " + files.size() + " change(s)");
         }
@@ -89,13 +89,13 @@ public class UIService {
             System.out.println("  No unpushed commits");
         } else {
             for (String commit : commits) {
-                System.out.println("  📌 " + commit);
+                System.out.println(" " + commit);
             }
         }
 
         System.out.println(PRIMARY + "╚═════════════════════════════════════════╝" + RESET);
 
-        System.out.println("\n" + PRIMARY + "📊 File Changes:" + RESET);
+        System.out.println("\n" + PRIMARY + " File Changes:" + RESET);
 
         int totalChanges = statusInfo.added.size() + statusInfo.modified.size() +
                 statusInfo.changed.size() + statusInfo.removed.size() +
@@ -116,7 +116,7 @@ public class UIService {
 
             if (!statusInfo.modified.isEmpty() || !statusInfo.changed.isEmpty()) {
                 int modCount = statusInfo.modified.size() + statusInfo.changed.size();
-                System.out.println("\n   " + YELLOW + "📝 Modified (" + modCount + " files):" + RESET);
+                System.out.println("\n   " + YELLOW + " Modified (" + modCount + " files):" + RESET);
                 statusInfo.modified.forEach(f -> System.out.println("      • " + f));
                 statusInfo.changed.forEach(f -> System.out.println("      • " + f));
             }
@@ -127,7 +127,7 @@ public class UIService {
             }
 
             if (!statusInfo.conflicting.isEmpty()) {
-                System.out.println("\n   " + RED + "⚠  Conflicting (" + statusInfo.conflicting.size() + " files):" + RESET);
+                System.out.println("\n   " + RED + " Conflicting (" + statusInfo.conflicting.size() + " files):" + RESET);
                 statusInfo.conflicting.forEach(f -> System.out.println("      • " + f));
             }
 
@@ -151,7 +151,7 @@ public class UIService {
     }
 
     public void warning(String message) {
-        System.out.println(YELLOW + "⚠ " + message + RESET);
+        System.out.println(YELLOW + " " + message + RESET);
     }
 
     public void info(String message) {

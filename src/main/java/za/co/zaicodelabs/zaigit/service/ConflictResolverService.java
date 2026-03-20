@@ -36,7 +36,7 @@ public class ConflictResolverService {
             uiService.progress("Getting AI analysis...");
             String explanation = ollamaService.explainConflict(conflictContent);
             uiService.clearProgress();
-            uiService.info("\n💡 AI Analysis:");
+            uiService.info("\nAI Analysis:");
             System.out.println(explanation);
             System.out.println();
         }
@@ -59,13 +59,13 @@ public class ConflictResolverService {
                     // Keep ours - extract content between <<<<<<< and =======
                     String resolved = resolveKeepOurs(conflictContent);
                     Files.writeString(filePath, resolved);
-                    uiService.success("✓ Kept current changes");
+                    uiService.success("Kept current changes");
                 }
                 case "2" -> {
                     // Keep theirs - extract content between ======= and >>>>>>>
                     String resolved = resolveKeepTheirs(conflictContent);
                     Files.writeString(filePath, resolved);
-                    uiService.success("✓ Accepted incoming changes");
+                    uiService.success("Accepted incoming changes");
                 }
                 case "3" -> {
                     uiService.info("Please edit the file manually:");
@@ -73,17 +73,17 @@ public class ConflictResolverService {
                     uiService.info("  Remove conflict markers: <<<<<<<, =======, >>>>>>>");
                     uiService.info("\nPress Enter when done...");
                     scanner.nextLine();
-                    uiService.success("✓ Manual edit completed");
+                    uiService.success("Manual edit completed");
                 }
                 case "4" -> {
-                    uiService.warning("⚠ Skipped file");
+                    uiService.warning("Skipped file");
                 }
                 default -> {
-                    uiService.error("✗ Invalid option");
+                    uiService.error("Invalid option");
                 }
             }
         } catch (IOException e) {
-            uiService.error("✗ Failed to resolve conflict: " + e.getMessage());
+            uiService.error("Failed to resolve conflict: " + e.getMessage());
         }
     }
 
@@ -162,14 +162,14 @@ public class ConflictResolverService {
                 return;
             }
 
-            uiService.warning("⚠  Found " + conflictingFiles.size() + " file(s) with conflicts");
+            uiService.warning("Found " + conflictingFiles.size() + " file(s) with conflicts");
 
             for (String file : conflictingFiles) {
                 try {
                     String content = Files.readString(Paths.get(file));
                     resolveConflict(file, content);
                 } catch (IOException e) {
-                    uiService.error("✗ Failed to read file: " + file);
+                    uiService.error("Failed to read file: " + file);
                 }
             }
 
@@ -181,11 +181,11 @@ public class ConflictResolverService {
                 for (String file : conflictingFiles) {
                     gitService.stageFile(file);
                 }
-                uiService.success("✓ Resolved files added");
+                uiService.success("Resolved files added");
             }
 
         } catch (Exception e) {
-            uiService.error("✗ Failed to resolve conflicts: " + e.getMessage());
+            uiService.error("Failed to resolve conflicts: " + e.getMessage());
         }
     }
 }

@@ -75,7 +75,7 @@ public class GitCLIController {
                     if (args.length > 2 && "-m".equals(args[1])) {
                         String message = args[2];
                         gitService.commitAndPush(message);
-                        uiService.success("✅ Changes pushed successfully!");
+                        uiService.success(" Changes pushed successfully!");
                     } else {
                         smartPush();
                     }
@@ -87,10 +87,10 @@ public class GitCLIController {
                 case "stash" -> {
                     if (args.length > 1 && "pop".equals(args[1])) {
                         gitService.stashPop();
-                        uiService.success("✅ Stash applied");
+                        uiService.success(" Stash applied");
                     } else {
                         gitService.stashChanges();
-                        uiService.success("✅ Changes stashed");
+                        uiService.success(" Changes stashed");
                     }
                 }
                 case "undo" -> undoLastCommit();
@@ -124,7 +124,7 @@ public class GitCLIController {
                 uiService.progress("Pulling from remote...");
                 gitService.pull();
                 uiService.clearProgress();
-                uiService.success("✅ Pull completed");
+                uiService.success(" Pull completed");
 
                 // Check for conflicts after pull
                 if (conflictResolverService.hasConflicts()) {
@@ -183,7 +183,7 @@ public class GitCLIController {
             uiService.progress("Pushing changes...");
             gitService.commitAndPush(commitMessage);
             uiService.clearProgress();
-            uiService.success("✅ Push completed successfully!");
+            uiService.success(" Push completed successfully!");
 
         } catch (Exception e) {
             uiService.clearProgress();
@@ -198,7 +198,7 @@ public class GitCLIController {
             uiService.progress("Pulling from remote...");
             gitService.pull();
             uiService.clearProgress();
-            uiService.success("✅ Pull completed successfully!");
+            uiService.success("Pull completed successfully!");
 
             // Check for conflicts
             if (conflictResolverService.hasConflicts()) {
@@ -259,7 +259,7 @@ public class GitCLIController {
                 }
                 try {
                     gitService.createBranch(name);
-                    uiService.success("✅ Branch created: " + name);
+                    uiService.success("Branch created: " + name);
                 } catch (Exception e) {
                     uiService.error("Failed: " + e.getMessage());
                 }
@@ -273,7 +273,7 @@ public class GitCLIController {
                 }
                 try {
                     gitService.switchBranch(name);
-                    uiService.success("✅ Switched to: " + name);
+                    uiService.success("Switched to: " + name);
                 } catch (Exception e) {
                     uiService.error("Failed: " + e.getMessage());
                 }
@@ -292,7 +292,7 @@ public class GitCLIController {
 
                 try {
                     gitService.deleteBranch(name, force);
-                    uiService.success("✅ Branch deleted: " + name);
+                    uiService.success("Branch deleted: " + name);
                 } catch (Exception e) {
                     uiService.error("Failed: " + e.getMessage());
                     if (!force) {
@@ -329,7 +329,7 @@ public class GitCLIController {
             case "1" -> {
                 try {
                     gitService.stashChanges();
-                    uiService.success("✅ Changes stashed");
+                    uiService.success(" Changes stashed");
                 } catch (Exception e) {
                     uiService.error("Failed: " + e.getMessage());
                 }
@@ -337,7 +337,7 @@ public class GitCLIController {
             case "2" -> {
                 try {
                     gitService.stashPop();
-                    uiService.success("✅ Stash applied");
+                    uiService.success(" Stash applied");
                 } catch (Exception e) {
                     uiService.error("Failed: " + e.getMessage());
                 }
@@ -356,13 +356,13 @@ public class GitCLIController {
 
     private void undoLastCommit() {
         uiService.section("Undo Last Commit");
-        uiService.warning("⚠️  This will undo the last commit (keeping changes). Continue? (y/N): ");
+        uiService.warning("This will undo the last commit (keeping changes). Continue? (y/N): ");
 
         String confirm = scanner.nextLine().trim().toLowerCase();
         if (confirm.equals("y") || confirm.equals("yes")) {
             try {
                 gitService.undoLastCommit();
-                uiService.success("✅ Last commit undone");
+                uiService.success(" Last commit undone");
             } catch (Exception e) {
                 uiService.error("Failed: " + e.getMessage());
             }
@@ -388,7 +388,7 @@ public class GitCLIController {
             if (gitService.hasChanges()) {
                 smartPush();
             } else {
-                uiService.success("✅ Repository is up to date!");
+                uiService.success("Repository is up to date!");
             }
         } catch (Exception e) {
             uiService.clearProgress();
@@ -430,7 +430,7 @@ public class GitCLIController {
         }
 
         configService.saveConfig();
-        uiService.success("✅ Configuration saved");
+        uiService.success(" Configuration saved");
     }
 
     private void testOllamaConnection() {
@@ -439,9 +439,9 @@ public class GitCLIController {
         uiService.clearProgress();
 
         if (available) {
-            uiService.success("✅ Ollama is available at " + configService.getOllamaUrl());
+            uiService.success(" Ollama is available at " + configService.getOllamaUrl());
         } else {
-            uiService.error("❌ Ollama is not available");
+            uiService.error("Ollama is not available");
             uiService.info("Make sure Ollama is running: ollama serve");
             uiService.info("Or check URL in settings: " + configService.getOllamaUrl());
         }
@@ -449,18 +449,18 @@ public class GitCLIController {
 
     private void viewConfiguration() {
         uiService.info("Current Configuration:");
-        System.out.println("\n📁 Git Repository: " + System.getProperty("user.dir"));
-        System.out.println("🌿 Current Branch: " + gitService.getCurrentBranch());
-        System.out.println("\n🤖 Ollama:");
+        System.out.println("\n Git Repository: " + System.getProperty("user.dir"));
+        System.out.println(" Current Branch: " + gitService.getCurrentBranch());
+        System.out.println("\n Ollama:");
         System.out.println("   URL: " + configService.getOllamaUrl());
         System.out.println("   Model: " + configService.getOllamaModel());
-        System.out.println("   Status: " + (ollamaService.isAvailable() ? "Connected ✓" : "Not available ✗"));
-        System.out.println("\n⚙️  Features:");
-        System.out.println("   AI Commit Messages: " + (configService.isAiCommitMessagesEnabled() ? "Enabled ✓" : "Disabled ✗"));
-        System.out.println("   Push Confirmation: " + (configService.isConfirmBeforePush() ? "Enabled ✓" : "Disabled ✗"));
-        System.out.println("   Auto-pull Before Push: " + (configService.isAutoPullBeforePush() ? "Enabled ✓" : "Disabled ✗"));
-        System.out.println("\n💾 Config File: " + configService.getConfigFilePath());
-        System.out.println("☕ Java Version: " + System.getProperty("java.version"));
+        System.out.println("   Status: " + (ollamaService.isAvailable() ? "Connected " : "Not available"));
+        System.out.println("\n  Features:");
+        System.out.println("   AI Commit Messages: " + (configService.isAiCommitMessagesEnabled() ? "Enabled" : "Disabled"));
+        System.out.println("   Push Confirmation: " + (configService.isConfirmBeforePush() ? "Enabled" : "Disabled"));
+        System.out.println("   Auto-pull Before Push: " + (configService.isAutoPullBeforePush() ? "Enabled" : "Disabled"));
+        System.out.println("\n Config File: " + configService.getConfigFilePath());
+        System.out.println(" Java Version: " + System.getProperty("java.version"));
     }
 
     private void toggleFeatures() {
@@ -479,19 +479,19 @@ public class GitCLIController {
             case "1" -> {
                 configService.setAiCommitMessagesEnabled(!configService.isAiCommitMessagesEnabled());
                 configService.saveConfig();
-                uiService.success("✅ AI Commit Messages: " +
+                uiService.success("AI Commit Messages: " +
                         (configService.isAiCommitMessagesEnabled() ? "ON" : "OFF"));
             }
             case "2" -> {
                 configService.setConfirmBeforePush(!configService.isConfirmBeforePush());
                 configService.saveConfig();
-                uiService.success("✅ Push Confirmation: " +
+                uiService.success("Push Confirmation: " +
                         (configService.isConfirmBeforePush() ? "ON" : "OFF"));
             }
             case "3" -> {
                 configService.setAutoPullBeforePush(!configService.isAutoPullBeforePush());
                 configService.saveConfig();
-                uiService.success("✅ Auto-pull Before Push: " +
+                uiService.success("Auto-pull Before Push: " +
                         (configService.isAutoPullBeforePush() ? "ON" : "OFF"));
             }
             case "0" -> {}
@@ -519,7 +519,7 @@ public class GitCLIController {
               zai-git help               Show this help
               zai-git version            Show version
             
-            Built with ❤ by ZaiCode Labs
+            Built with love by ZaiCode Labs
             https://zaicodelabs.co.za
             """);
     }
