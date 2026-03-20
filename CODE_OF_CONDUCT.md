@@ -73,7 +73,7 @@ or acting as an appointed representative at an online or offline event.
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at:
 
-**conduct@zaicodelabs.co.za**
+**info@zaicodelabs.co.za**
 
 All complaints will be reviewed and investigated promptly and fairly.
 
@@ -142,7 +142,7 @@ community.
 If you believe you have been falsely or unfairly accused of violating this Code
 of Conduct, you may appeal the decision by contacting:
 
-**appeals@zaicodelabs.co.za**
+**info@zaicodelabs.co.za**
 
 Please include:
 * A description of your appeal
@@ -199,8 +199,8 @@ If you have questions about this Code of Conduct or would like to discuss
 any aspect of it, please:
 
 * Open a GitHub Discussion
-* Email: conduct@zaicodelabs.co.za
-* Visit: https://zaicodelabs.co.za/conduct
+* Email: info@zaicodelabs.co.za
+* Visit: https://zaicodelabs.co.za/
 
 ## Updates
 
@@ -219,4 +219,4 @@ be announced through:
 
 By participating in the ZaiGit community, you agree to abide by this Code of Conduct.
 
-Thank you for helping make this a welcoming, friendly community for all! 🤝
+Thank you for helping make this a welcoming, friendly community for all! 

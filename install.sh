@@ -77,13 +77,13 @@ if [ -n "$SHELL_CONFIG" ]; then
         echo "" >> "$SHELL_CONFIG"
         echo '# ZaiGit' >> "$SHELL_CONFIG"
         echo 'export PATH="$HOME/.zaigit:$PATH"' >> "$SHELL_CONFIG"
-        echo "✓ Added to PATH in $SHELL_CONFIG"
+        echo " Added to PATH in $SHELL_CONFIG"
     fi
 fi
 
 echo ""
 echo "╔════════════════════════════════════════╗"
-echo "║   ✓ Installation Complete!             ║"
+echo "║    Installation Complete!             ║"
 echo "╚════════════════════════════════════════╝"
 echo ""
 echo "To use ZaiGit:"
