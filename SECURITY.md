@@ -17,7 +17,7 @@ The ZaiGit team takes security bugs seriously. We appreciate your efforts to res
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them via email to: **security@zaicodelabs.co.za**
+Instead, please report them via email to: **info@zaicodelabs.co.za**
 
 You should receive a response within 48 hours. If for some reason you do not, please follow up via email to ensure we received your original message.
 
