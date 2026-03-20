@@ -1,0 +1,30 @@
+# ZaiGit Configuration
+spring:
+  application:
+    name: ZaiGit
+  main:
+    banner-mode: off
+    web-application-type: none
+  server:
+    port: -1
+
+logging:
+  level:
+    root: ERROR
+
+# Git Configuration
+git:
+  confirm-before-push: true
+  auto-pull-before-push: true
+  default-branch: main
+
+# Ollama Configuration
+ollama:
+  url: http://localhost:11434
+  model: codellama
+
+# Features
+features:
+  ai-commit-messages: true
+  push-confirmation: true
+  auto-conflict-resolution: true

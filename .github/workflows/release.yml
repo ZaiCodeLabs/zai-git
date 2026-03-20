@@ -1,0 +1,96 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B clean package -DskipTests
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/zai-git.jar
+            install.sh
+            README.md
+          body: |
+            ## ZaiGit v${{ steps.version.outputs.VERSION }}
+            
+            **AI-Powered Git Automation by ZaiCode Labs**
+            
+            ###  What's New
+            See [CHANGELOG.md](CHANGELOG.md) for details.
+            
+            ### 📥 Quick Install
+            
+            **Method 1: From JAR (Fastest)**
+            ```bash
+            # Download the JAR
+            wget https://github.com/ZaiCodeLabs/zai-git/releases/download/v${{ steps.version.outputs.VERSION }}/zai-git.jar
+            
+            # Create directory
+            mkdir -p ~/.zaigit
+            mv zai-git.jar ~/.zaigit/
+            
+            # Create executable
+            cat > ~/.zaigit/zai-git << 'EOF'
+            #!/bin/bash
+            java -jar "$HOME/.zaigit/zai-git.jar" "$@"
+            EOF
+            
+            chmod +x ~/.zaigit/zai-git
+            
+            # Add to PATH
+            echo 'export PATH="$HOME/.zaigit:$PATH"' >> ~/.bashrc
+            source ~/.bashrc
+            ```
+            
+            **Method 2: From Source**
+            ```bash
+            git clone https://github.com/ZaiCodeLabs/zai-git.git
+            cd zai-git
+            chmod +x install.sh
+            ./install.sh --build
+            ```
+            
+            ### 📋 Requirements
+            - Java 21+
+            - Git
+            - Ollama (optional, for AI features)
+            
+            ### 🆘 Support
+            -  Documentation: [README.md](README.md)
+            -  Issues: [Report Bug](https://github.com/ZaiCodeLabs/zai-git/issues)
+            -  Website: https://zaicodelabs.co.za
+            
+            ---
+            
+            **Built with ❤️ by ZaiCode Labs**
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
