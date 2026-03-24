@@ -1,111 +1,45 @@
 name: Release
-
 on:
   push:
-    tags:
-      - 'v*'
-
+    tags: ['v*']
 permissions:
-  contents: write
+  contents: write  # REQUIRED!
 
 jobs:
   release:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full history for changelog
+      - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: maven
 
-      - name: Build
-        run: ./mvnw clean package -DskipTests
+      - run: ./mvnw clean package -DskipTests
 
       - name: Get version
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Generate changelog
-        id: changelog
-        uses: heinrichreimer/github-changelog-generator@v0.0.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          sinceTag: v${{ steps.version.outputs.VERSION }}
-          futureRelease: v${{ steps.version.outputs.VERSION }}
-          output: changelog.md
-
       - name: Prepare assets
         run: |
-          cp target/zai-git.jar zai-git-${{ steps.version.outputs.VERSION }}.jar
+          cp target/zai-git.jar "zai-git-${{ steps.version.outputs.VERSION }}.jar"
           chmod +x install.sh
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v2
         with:
           files: |
             zai-git-${{ steps.version.outputs.VERSION }}.jar
             install.sh
-            README.md
-            HELP.md
-            INSTALLATION.md
-            TEST.md
           body: |
-            #  ZaiGit v${{ steps.version.outputs.VERSION }}
-
-            **AI-Powered Git Automation by ZaiCode Labs**
-
-            ## Quick Install
-
-            ### Linux/macOS (Recommended)
+            # ZaiGit v${{ steps.version.outputs.VERSION }}
+            
+            **Quick Install:**
             ```bash
             wget https://github.com/ZaiCodeLabs/zai-git/releases/latest/download/install.sh
             chmod +x install.sh
             ./install.sh
-            source ~/.bashrc
-            zai-git --version
             ```
-
-            ### From JAR
-            ```bash
-            wget https://github.com/ZaiCodeLabs/zai-git/releases/download/v${{ steps.version.outputs.VERSION }}/zai-git-${{ steps.version.outputs.VERSION }}.jar -O ~/.zaigit/zai-git.jar
-            echo '#!/bin/bash\njava -jar ~/.zaigit/zai-git.jar "$@"' > ~/.zaigit/zai-git
-            chmod +x ~/.zaigit/zai-git
-            echo 'export PATH="$HOME/.zaigit:$PATH"' >> ~/.bashrc
-            source ~/.bashrc
-            ```
-
-            ##  What's New
-
-            ${{ steps.changelog.outputs.content }}
-
-            ##  Requirements
-            - Java 21+ ([Download](https://adoptium.net/))
-            - Git
-
-            ##  Optional AI
-            ```bash
-            curl -fsSL https://ollama.com/install.sh | sh
-            ollama pull codellama
-            ```
-
-            ## Full Docs
-            - [User Guide](HELP.md)
-            - [Installation](INSTALLATION.md)
-            - [Testing](TEST.md)
-
-            ## Support
-            - Issues: [github.com/ZaiCodeLabs/zai-git/issues](https://github.com/ZaiCodeLabs/zai-git/issues)
-            - Email: [info@zaicodelabs.co.za](mailto:info@zaicodelabs.co.za)
-            - Website: [zaicodelabs.co.za](https://zaicodelabs.co.za)
-
-            ---
-            **⭐ Star us!** Built by by ZaiCode Labs (South Africa 🇿🇦)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
