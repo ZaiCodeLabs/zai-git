@@ -2,8 +2,9 @@ name: Release
 on:
   push:
     tags: ['v*']
+
 permissions:
-  contents: write  # REQUIRED!
+  contents: write
 
 jobs:
   release:
@@ -15,6 +16,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: maven
+
+      - name: Make mvnw executable
+        run: chmod +x mvnw mvnw.cmd
 
       - run: ./mvnw clean package -DskipTests
 
@@ -32,14 +37,5 @@ jobs:
           files: |
             zai-git-${{ steps.version.outputs.VERSION }}.jar
             install.sh
-          body: |
-            # ZaiGit v${{ steps.version.outputs.VERSION }}
-            
-            **Quick Install:**
-            ```bash
-            wget https://github.com/ZaiCodeLabs/zai-git/releases/latest/download/install.sh
-            chmod +x install.sh
-            ./install.sh
-            ```
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
