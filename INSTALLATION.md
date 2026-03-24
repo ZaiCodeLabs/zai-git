@@ -1,6 +1,6 @@
 # Installation Guide
 
-Complete installation instructions for ZaiGit on all supported platforms.
+Complete installation instructions for ZaiGit on all supported platform.
 
 ## Table of Contents
 
