@@ -14,7 +14,7 @@
 
 	<groupId>za.co.zaicodelabs</groupId>
 	<artifactId>zai-git</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>ZaiGit</name>
 	<description>AI-Powered Git Automation Tool by ZaiCode Labs</description>
 

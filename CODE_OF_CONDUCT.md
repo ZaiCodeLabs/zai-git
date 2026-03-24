@@ -1,222 +1,39 @@
-# Code of Conduct
-
+# ZaiGit Code of Conduct
 ## Our Pledge
-
-We as members, contributors, and leaders pledge to make participation in our
-community a harassment-free experience for everyone, regardless of age, body
-size, visible or invisible disability, ethnicity, sex characteristics, gender
-identity and expression, level of experience, education, socio-economic status,
-nationality, personal appearance, race, caste, color, religion, or sexual
-identity and orientation.
-
-We pledge to act and interact in ways that contribute to an open, welcoming,
-diverse, inclusive, and healthy community.
-
+We pledge to make the ZaiGit community welcoming and respectful for all contributors, regardless of experience level or background.
 ## Our Standards
+**✅ Do:**
+- Be respectful and constructive
+- Give clear feedback
+- Focus on solutions, not individuals
+- Welcome newcomers
+- Credit others' work
 
-### Examples of behavior that contributes to a positive environment:
-
-* **Being respectful** of differing opinions, viewpoints, and experiences
-* **Giving and gracefully accepting** constructive feedback
-* **Accepting responsibility** and apologizing to those affected by our mistakes,
-  and learning from the experience
-* **Focusing on what is best** not just for us as individuals, but for the overall
-  community
-* **Showing empathy** towards other community members
-* **Using welcoming and inclusive language**
-* **Being patient and kind**, especially with newcomers
-
-### Examples of unacceptable behavior:
-
-* The use of sexualized language or imagery, and sexual attention or advances of
-  any kind
-* Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or email address,
-  without their explicit permission
-* Dismissing or attacking inclusion-oriented requests
-* Making assumptions about someone's level of knowledge or abilities
-* Other conduct which could reasonably be considered inappropriate in a
-  professional setting
-
-## Enforcement Responsibilities
-
-Project maintainers are responsible for clarifying and enforcing our standards of
-acceptable behavior and will take appropriate and fair corrective action in
-response to any behavior that they deem inappropriate, threatening, offensive,
-or harmful.
-
-Project maintainers have the right and responsibility to remove, edit, or reject
-comments, commits, code, wiki edits, issues, and other contributions that are
-not aligned to this Code of Conduct, and will communicate reasons for moderation
-decisions when appropriate.
-
-## Scope
-
-This Code of Conduct applies within all community spaces, including:
-
-* GitHub repositories (issues, pull requests, discussions)
-* Code reviews and comments
-* Community forums and chat platforms
-* Social media when representing the project
-* Events and meetups (virtual or in-person)
-
-This Code of Conduct also applies when an individual is officially representing
-the community in public spaces. Examples of representing our community include
-using an official e-mail address, posting via an official social media account,
-or acting as an appointed representative at an online or offline event.
+**❌ Don't:**
+- Use harassment or abusive language
+- Share private information without permission
+- Spam, troll, or derail discussions
+- Make personal attacks
 
 ## Enforcement
 
-### Reporting
-
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at:
-
 **info@zaicodelabs.co.za**
 
-All complaints will be reviewed and investigated promptly and fairly.
+We review all reports promptly and take appropriate action.
 
-When reporting, please include:
+## Scope
 
-* Your contact information
-* Names (real, usernames, or pseudonyms) of any individuals involved
-* Your account of what occurred, including any relevant context
-* Links to publicly available records (e.g., GitHub comments, screenshots)
-* Any other information you believe is relevant
+This applies to:
+- GitHub issues, PRs, discussions
+- Code reviews
+- Our website and social channels
 
-### Confidentiality
+## Questions?
 
-All community leaders are obligated to respect the privacy and security of the
-reporter of any incident. We will not share your identity without your explicit
-consent, except when required by law.
-
-## Enforcement Guidelines
-
-Community leaders will follow these Community Impact Guidelines in determining
-the consequences for any action they deem in violation of this Code of Conduct:
-
-### 1. Correction
-
-**Community Impact**: Use of inappropriate language or other behavior deemed
-unprofessional or unwelcome in the community.
-
-**Consequence**: A private, written warning from community leaders, providing
-clarity around the nature of the violation and an explanation of why the
-behavior was inappropriate. A public apology may be requested.
-
-### 2. Warning
-
-**Community Impact**: A violation through a single incident or series of
-actions.
-
-**Consequence**: A warning with consequences for continued behavior. No
-interaction with the people involved, including unsolicited interaction with
-those enforcing the Code of Conduct, for a specified period of time. This
-includes avoiding interactions in community spaces as well as external channels
-like social media. Violating these terms may lead to a temporary or permanent
-ban.
-
-### 3. Temporary Ban
-
-**Community Impact**: A serious violation of community standards, including
-sustained inappropriate behavior.
-
-**Consequence**: A temporary ban from any sort of interaction or public
-communication with the community for a specified period of time. No public or
-private interaction with the people involved, including unsolicited interaction
-with those enforcing the Code of Conduct, is allowed during this period.
-Violating these terms may lead to a permanent ban.
-
-### 4. Permanent Ban
-
-**Community Impact**: Demonstrating a pattern of violation of community
-standards, including sustained inappropriate behavior, harassment of an
-individual, or aggression toward or disparagement of classes of individuals.
-
-**Consequence**: A permanent ban from any sort of public interaction within the
-community.
-
-## Appeals
-
-If you believe you have been falsely or unfairly accused of violating this Code
-of Conduct, you may appeal the decision by contacting:
-
-**info@zaicodelabs.co.za**
-
-Please include:
-* A description of your appeal
-* Why you believe the decision was incorrect
-* Any supporting evidence
-
-Appeals will be reviewed by a different set of community leaders when possible.
-
-## Acknowledgements
-
-This Code of Conduct is adapted from:
-* [Contributor Covenant](https://www.contributor-covenant.org), version 2.1
-* [Mozilla Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/)
-* [Django Code of Conduct](https://www.djangoproject.com/conduct/)
-
-## Our Commitment
-
-At ZaiCode Labs, we believe that:
-
-* **Everyone deserves respect**: Regardless of their background or experience level
-* **Diversity strengthens us**: Different perspectives lead to better solutions
-* **Learning is continuous**: We all make mistakes and grow from them
-* **Community comes first**: We prioritize collective success over individual gain
-
-## Positive Community Examples
-
-### For Maintainers
-
-* Welcoming first-time contributors warmly
-* Providing clear, constructive feedback on contributions
-* Recognizing and celebrating community achievements
-* Being transparent about decisions and processes
-* Responding promptly to reports of misconduct
-
-### For Contributors
-
-* Assuming good faith in discussions
-* Offering help to those who ask questions
-* Accepting feedback gracefully
-* Crediting others for their work
-* Being patient with slower responses
-
-### For Everyone
-
-* Using "we" instead of "you" when giving feedback
-* Asking questions before making assumptions
-* Celebrating successes, big and small
-* Admitting when you don't know something
-* Helping others learn and grow
-
-## Questions or Concerns?
-
-If you have questions about this Code of Conduct or would like to discuss
-any aspect of it, please:
-
-* Open a GitHub Discussion
-* Email: info@zaicodelabs.co.za
-* Visit: https://zaicodelabs.co.za/
-
-## Updates
-
-This Code of Conduct may be updated from time to time. Significant changes will
-be announced through:
-
-* GitHub repository announcement
-* CHANGELOG.md
-* Community discussion channels
+Email: **info@zaicodelabs.co.za**  
+Website: **[zaicodelabs.co.za](https://zaicodelabs.co.za/)**
 
 ---
 
-**Version**: 1.0  
-**Last Updated**: March 2026  
-**Effective Date**: March 2026
-
-By participating in the ZaiGit community, you agree to abide by this Code of Conduct.
-
-Thank you for helping make this a welcoming, friendly community for all! 
+**Version 1.0.0** | **March 2026**  
+*Adapted for ZaiGit by ZaiCode Labs*
