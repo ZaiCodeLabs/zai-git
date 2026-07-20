@@ -75,11 +75,34 @@ public class GitService implements AutoCloseable {
     }
 
     public void pull() throws GitAPIException {
-        requireGit().pull().call();
+        runNativeGit("pull");
     }
 
     public void push() throws GitAPIException {
-        requireGit().push().call();
+        runNativeGit("push");
+    }
+
+    private void runNativeGit(String operation) {
+        ProcessBuilder processBuilder = new ProcessBuilder("git", operation)
+                .directory(requireRepository().getWorkTree())
+                .redirectInput(ProcessBuilder.Redirect.INHERIT)
+                .redirectErrorStream(true);
+
+        try {
+            Process process = processBuilder.start();
+            String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+            int exitCode = process.waitFor();
+
+            if (exitCode != 0) {
+                String detail = output.isBlank() ? "Git exited with status " + exitCode : output;
+                throw new IllegalStateException(detail);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to run the Git executable", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Git " + operation + " was interrupted", e);
+        }
     }
 
     public void commitAndPush(String message) throws GitAPIException {
@@ -366,8 +389,8 @@ public class GitService implements AutoCloseable {
         return sb.toString();
     }
 
-    public void stashChanges() throws GitAPIException {
-        requireGit().stashCreate().call();
+    public boolean stashChanges() throws GitAPIException {
+        return requireGit().stashCreate().setIncludeUntracked(true).call() != null;
     }
 
     public void stashPop() throws GitAPIException {

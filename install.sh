@@ -97,7 +97,7 @@ resolve_jar() {
     local jar_path
 
     if [[ "$BUILD_FROM_SOURCE" == true ]]; then
-        build_application
+        build_application >&2
         jar_path="${SCRIPT_DIRECTORY}/target/zai-git.jar"
     elif [[ -f "${SCRIPT_DIRECTORY}/zai-git.jar" ]]; then
         jar_path="${SCRIPT_DIRECTORY}/zai-git.jar"

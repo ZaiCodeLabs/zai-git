@@ -32,12 +32,12 @@ public class UIService {
         ║    AI-Powered Git Automation                                      ║
         ║    Smart Workflow | Auto Commits | Zero Hassle                    ║
         ║                                                                   ║
-        ║   Built with %s by ZaiCode Labs                                   ║
+        ║   Developed by ZaiCode Labs                                       ║
         ║   https://zaicodelabs.co.za                                       ║
         ║                                                                   ║
         ╚═══════════════════════════════════════════════════════════════════╝
         """;
-        System.out.println(String.format(banner, ACCENT + "❤ " + PRIMARY) + RESET);
+        System.out.println(banner + RESET);
     }
 
     public void printMainMenu() {
@@ -48,7 +48,7 @@ public class UIService {
         System.out.println("  4.  Branch Operations");
         System.out.println("  5.  Commit History");
         System.out.println("  6.  Stash Management");
-        System.out.println("  7.️ Undo Last Commit");
+        System.out.println("  7.  Undo Last Commit");
         System.out.println("  8.  Sync Repository");
         System.out.println("  9.  Settings");
         System.out.println("  0.  Exit");

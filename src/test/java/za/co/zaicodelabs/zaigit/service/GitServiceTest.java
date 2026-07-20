@@ -55,12 +55,16 @@ class GitServiceTest {
             Files.writeString(file, "original\n");
             service.commit("feat: add example");
             Files.writeString(file, "stashed\n");
+            Path untracked = tempDir.resolve("untracked.txt");
+            Files.writeString(untracked, "preserve me\n");
 
-            service.stashChanges();
+            assertTrue(service.stashChanges());
             assertFalse(service.listStashes().contains("No stashes"));
+            assertFalse(Files.exists(untracked));
 
             service.stashPop();
             assertEquals("stashed\n", Files.readString(file));
+            assertEquals("preserve me\n", Files.readString(untracked));
             assertTrue(service.listStashes().contains("No stashes"));
         }
     }

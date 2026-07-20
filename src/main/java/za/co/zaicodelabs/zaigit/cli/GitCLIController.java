@@ -126,7 +126,7 @@ public class GitCLIController {
             // Auto-pull first if enabled
             if (configService.isAutoPullBeforePush()) {
                 uiService.progress("Pulling from remote...");
-                gitService.pull();
+                pullPreservingLocalChanges();
                 uiService.clearProgress();
                 uiService.success(" Pull completed");
 
@@ -209,7 +209,7 @@ public class GitCLIController {
 
         try {
             uiService.progress("Pulling from remote...");
-            gitService.pull();
+            pullPreservingLocalChanges();
             uiService.clearProgress();
             uiService.success("Pull completed successfully!");
 
@@ -395,7 +395,7 @@ public class GitCLIController {
 
         try {
             uiService.progress("Pulling...");
-            gitService.pull();
+            pullPreservingLocalChanges();
             uiService.clearProgress();
 
             // Check for conflicts
@@ -414,6 +414,42 @@ public class GitCLIController {
             uiService.clearProgress();
             uiService.error("Sync failed: " + e.getMessage());
             return false;
+        }
+    }
+
+    private void pullPreservingLocalChanges() throws Exception {
+        boolean stashCreated = false;
+
+        if (gitService.hasChanges()) {
+            stashCreated = gitService.stashChanges();
+        }
+
+        try {
+            gitService.pull();
+        } catch (Exception pullFailure) {
+            if (stashCreated) {
+                try {
+                    gitService.stashPop();
+                } catch (Exception restoreFailure) {
+                    throw new IllegalStateException(
+                            pullFailure.getMessage()
+                                    + "; local changes remain safely stored in the stash because they could not be restored: "
+                                    + restoreFailure.getMessage(),
+                            pullFailure);
+                }
+            }
+            throw pullFailure;
+        }
+
+        if (stashCreated) {
+            try {
+                gitService.stashPop();
+            } catch (Exception restoreFailure) {
+                throw new IllegalStateException(
+                        "Pull completed, but local changes could not be restored automatically. "
+                                + "They remain safely stored in the stash: " + restoreFailure.getMessage(),
+                        restoreFailure);
+            }
         }
     }
 
@@ -540,7 +576,7 @@ public class GitCLIController {
               zai-git help               Show this help
               zai-git version            Show version
             
-            Built with love by ZaiCode Labs
+            Developed by ZaiCode Labs
             https://zaicodelabs.co.za
             """);
     }
