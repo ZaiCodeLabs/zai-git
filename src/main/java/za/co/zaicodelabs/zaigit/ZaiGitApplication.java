@@ -15,7 +15,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * Technology should make life better for businesses, communities, and people everywhere.
  *
  * @author ZaiCode Labs
- * @version 1.0.0
+ * @version 1.0.3
  * @see <a href="https://zaicodelabs.co.za">ZaiCode Labs</a>
  */
 @SpringBootApplication
