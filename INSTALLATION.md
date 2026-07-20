@@ -1,203 +1,140 @@
----
-
-## **INSTALLATION.md** (Production-Polished)
-
-````markdown
 # ZaiGit Installation Guide
 
-AI-Powered Git CLI | Linux | macOS | Windows | Java 21+
-
----
-
-## Quick Installation (Approx. 30 seconds)
-
-### Linux/macOS
-```bash
-wget https://github.com/ZaiCodeLabs/zai-git/releases/latest/download/install.sh
-chmod +x install.sh
-./install.sh
-source ~/.bashrc
-zai-git --version  # Verify installation
-````
-
-### Windows (PowerShell)
-
-```powershell
-# Download zai-git.jar from GitHub Releases
-# Run installer or follow manual setup below
-```
-
----
+This guide describes how to install ZaiGit from a release or from source.
 
 ## System Requirements
 
-| Required            | Optional                         |
-| ------------------- | -------------------------------- |
-| Java 21+            | Ollama (for AI commits)          |
-| Git                 | 4GB RAM (recommended for Ollama) |
-| Linux/macOS/Windows |                                  |
+* Java 21 or later
+* Git
+* A supported terminal on Linux, macOS, Windows, or WSL
+* Ollama, if commit message generation is required
 
-### Verify Java Installation
+Verify the installed Java version:
 
 ```bash
-java -version  # Must be version 21 or higher
+java -version
 ```
 
----
+## Install from a Release
 
-## Install Java 21+ (If Required)
-
-**Ubuntu/Debian**
+Download `zai-git.jar` and `install.sh` from the [latest release](https://github.com/ZaiCodeLabs/zai-git/releases/latest), place them in the same directory, and run:
 
 ```bash
-sudo apt update && sudo apt install openjdk-21-jdk
-```
-
-**macOS (Homebrew)**
-
-```bash
-brew install openjdk@21
-```
-
-**Windows**
-Download from: [https://adoptium.net/](https://adoptium.net/)
-
----
-
-## Installation Methods
-
-### 1. Recommended: Automated Installation
-
-```bash
-wget https://github.com/ZaiCodeLabs/zai-git/releases/latest/download/install.sh
 chmod +x install.sh
-./install.sh  # Installs locally (~/.zaigit)
-
-# Optional: make globally accessible
-sudo ln -sf ~/.zaigit/zai-git /usr/local/bin/zai-git
+./install.sh
 ```
 
----
+The installer places the application in `~/.zaigit` and can create a link in `/usr/local/bin` when requested.
 
-### 2. Manual Installation
+Restart the terminal after installation, or reload the relevant shell configuration. The current installer updates `~/.bashrc`:
 
 ```bash
-mkdir -p ~/.zaigit
-
-# Download latest release
-curl -L https://github.com/ZaiCodeLabs/zai-git/releases/latest/download/zai-git.jar -o ~/.zaigit/zai-git.jar
-
-# Create launcher script
-cat > ~/.zaigit/zai-git << 'EOF'
-#!/bin/bash
-java -jar ~/.zaigit/zai-git.jar "$@"
-EOF
-
-chmod +x ~/.zaigit/zai-git
-
-# Add to PATH
-echo 'export PATH="$HOME/.zaigit:$PATH"' >> ~/.bashrc
 source ~/.bashrc
+zai-git version
 ```
 
----
-
-### 3. Build from Source
+## Build and Install from Source
 
 ```bash
 git clone https://github.com/ZaiCodeLabs/zai-git.git
 cd zai-git
-mvn clean package -DskipTests
+./mvnw verify
 ./install.sh --build
 ```
 
----
+## Manual Installation
 
-## Git Authentication (Required – One-Time Per Repository)
-
-ZaiGit uses standard Git authentication (same as `git push`).
+Create an installation directory and copy the packaged application:
 
 ```bash
-# Recommended: HTTPS
-git remote set-url origin https://YOUR_USERNAME:ghp_TOKEN@github.com/ORG/REPO.git
+mkdir -p ~/.zaigit
+cp target/zai-git.jar ~/.zaigit/zai-git.jar
 ```
 
-**Create Personal Access Token (PAT):**
-
-* Visit: [https://github.com/settings/tokens](https://github.com/settings/tokens)
-* Enable **repo** scope
-
----
-
-## Optional: Ollama (AI Commit Messages)
+Create a launcher named `~/.zaigit/zai-git` with the following content:
 
 ```bash
-curl -fsSL https://ollama.com/install.sh | sh
-ollama serve &
+#!/usr/bin/env bash
+exec java -jar "$HOME/.zaigit/zai-git.jar" "$@"
+```
+
+Make the launcher executable and add its directory to `PATH`:
+
+```bash
+chmod +x ~/.zaigit/zai-git
+export PATH="$HOME/.zaigit:$PATH"
+```
+
+Add the `PATH` export to the appropriate shell configuration file to retain it between sessions.
+
+## Git Authentication
+
+ZaiGit relies on the authentication already configured for Git. Recommended options include:
+
+* SSH keys
+* Git Credential Manager
+* A platform credential helper
+
+Verify remote access with standard Git before using ZaiGit:
+
+```bash
+git remote -v
+git fetch
+```
+
+Do not place access tokens directly in repository URLs because they can be exposed through configuration files, logs, and command history.
+
+## Ollama Configuration
+
+Install Ollama according to its platform documentation, then start the service and download a model:
+
+```bash
+ollama serve
 ollama pull codellama
 ```
 
-Configure via:
+Open `zai-git` in interactive mode and select the settings menu to configure the Ollama endpoint and model.
+
+## Verify the Installation
 
 ```bash
-zai-git settings
-```
-
----
-
-## Verify Installation
-
-```bash
-zai-git --version
+zai-git version
 zai-git help
-cd your/git/repo
+cd /path/to/repository
 zai-git status
 ```
-
-**Expected binary locations:**
-
-* `~/.zaigit/zai-git`
-* `/usr/local/bin/zai-git` (if globally installed)
-
----
 
 ## Troubleshooting
 
-| Issue                         | Solution                                   |
-| ----------------------------- | ------------------------------------------ |
-| `command not found`           | Run `source ~/.bashrc` or restart terminal |
-| `Java 21+ required`           | Install Java 21 or higher                  |
-| `remote hung up unexpectedly` | Verify HTTPS authentication                |
-| `no CredentialsProvider`      | Ensure token is in remote URL              |
-| `Ollama unavailable`          | Install or disable AI features             |
+### Command not found
 
----
+Confirm that `~/.zaigit` is included in `PATH`, then restart the terminal or reload the shell configuration.
 
-## First Use
+### Unsupported Java version
 
-```bash
-cd your/git/repo
-zai-git status
-zai-git push
-```
+Install Java 21 or later and confirm that the correct `java` executable appears first in `PATH`.
 
----
+### Git authentication failure
+
+Run `git fetch` or `git push` directly to validate the repository credentials and remote configuration.
+
+### Ollama unavailable
+
+Confirm that Ollama is running and that the configured URL and model are correct. Commit message generation can also be disabled from the settings menu.
 
 ## Uninstall
 
+Remove the installation directory and any link created in `/usr/local/bin`:
+
 ```bash
 rm -rf ~/.zaigit
-
-# Remove PATH entry from ~/.bashrc
-source ~/.bashrc
+sudo rm /usr/local/bin/zai-git
 ```
 
----
+Remove the ZaiGit `PATH` entry from the shell configuration if it was added manually.
 
 ## Support
 
-GitHub: [https://github.com/ZaiCodeLabs/zai-git](https://github.com/ZaiCodeLabs/zai-git)
-Email: [info@zaicodelabs.co.za](mailto:info@zaicodelabs.co.za)
-Website: [https://zaicodelabs.co.za](https://zaicodelabs.co.za)
+Repository: [github.com/ZaiCodeLabs/zai-git](https://github.com/ZaiCodeLabs/zai-git)
 
-```
+Email: [info@zaicodelabs.co.za](mailto:info@zaicodelabs.co.za)

@@ -99,7 +99,7 @@ public class UIService {
 
         int totalChanges = statusInfo.added.size() + statusInfo.modified.size() +
                 statusInfo.changed.size() + statusInfo.removed.size() +
-                statusInfo.untracked.size();
+                statusInfo.missing.size() + statusInfo.untracked.size();
 
         if (totalChanges == 0) {
             System.out.println("  No changes");
@@ -121,9 +121,11 @@ public class UIService {
                 statusInfo.changed.forEach(f -> System.out.println("      • " + f));
             }
 
-            if (!statusInfo.removed.isEmpty()) {
-                System.out.println("\n   " + RED + "➖ Removed (" + statusInfo.removed.size() + " files):" + RESET);
+            if (!statusInfo.removed.isEmpty() || !statusInfo.missing.isEmpty()) {
+                int removedCount = statusInfo.removed.size() + statusInfo.missing.size();
+                System.out.println("\n   " + RED + "➖ Removed (" + removedCount + " files):" + RESET);
                 statusInfo.removed.forEach(f -> System.out.println("      • " + f));
+                statusInfo.missing.forEach(f -> System.out.println("      • " + f));
             }
 
             if (!statusInfo.conflicting.isEmpty()) {

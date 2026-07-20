@@ -1,193 +1,110 @@
----
-
-## **TEST.md** (Startup + User Verification Guide)
-
-````markdown id="7c2m4x"
 # Testing ZaiGit
 
-Verify that ZaiGit is functioning correctly before using it in production repositories.
+This guide covers automated tests and manual verification of the command line application.
 
----
+## Automated Verification
 
-## Quick Test (Approx. 30 seconds)
+Run the complete Maven verification lifecycle:
 
 ```bash
-# 1. Create a test repository
-mkdir zai-test && cd zai-test
+./mvnw verify
+```
+
+This command compiles the application, runs the test suite, and creates the executable application at `target/zai-git.jar`.
+
+## Manual Verification Repository
+
+Use a temporary repository so that testing does not affect production work:
+
+```bash
+mkdir zai-git-test
+cd zai-git-test
 git init
-echo "# Test Repo" > README.md
+git config user.name "ZaiGit Test"
+git config user.email "test@example.com"
+echo "Test repository" > README.md
 git add README.md
-git commit -m "Initial commit"
+git commit -m "test: initialize repository"
+```
 
-# 2. Verify ZaiGit basics
-zai-git status
-zai-git log
-
-# 3. Test smart push
-echo "test change" >> README.md
-zai-git push
-````
-
----
-
-## Complete Test Suite
-
-### 1. Basic Operations
+## Status and History
 
 ```bash
 zai-git status
 zai-git log
-zai-git branches
 ```
 
----
+Confirm that the current branch, working tree state, and recent commit are displayed correctly.
 
-### 2. Smart Push Workflow
+## Commit and Push Workflow
+
+Remote operations require a test remote with valid authentication:
 
 ```bash
-echo "feature 1" >> README.md
+git remote add origin <test-repository-url>
+git push -u origin HEAD
+echo "Test change" >> README.md
 zai-git push
 ```
 
-Expected flow:
+Confirm that ZaiGit detects the change, presents an appropriate commit message, displays the affected file, and requests confirmation when that setting is enabled.
 
-* Change detection
-* AI-generated commit message
-* Preview before confirmation
-
----
-
-### 3. Sync and Pull
+## Pull and Synchronization
 
 ```bash
+zai-git pull
 zai-git sync
 ```
 
----
+Confirm that both commands report failures with a nonzero process status when the remote operation cannot be completed.
 
-### 4. Branch Operations
-
-```bash
-zai-git branches   # Create a branch (e.g., test-branch)
-zai-git push       # Push changes
-zai-git branches   # Switch branches
-zai-git branches   # Delete branch
-```
-
----
-
-### 5. Stash Operations
+## Stash Workflow
 
 ```bash
-echo "stash test" >> README.md
+echo "Stashed change" >> README.md
 zai-git stash
 zai-git status
 zai-git stash pop
 ```
 
----
+Confirm that the change is restored and that the applied stash is removed from the stash list.
 
-### 6. Undo Last Commit
+## Undo Workflow
 
 ```bash
+echo "Undo test" >> README.md
 git add README.md
-git commit -m "test undo"
+git commit -m "test: verify undo"
 zai-git undo
+git status
 ```
 
----
+Confirm that the latest commit is removed while its changes remain staged.
 
-## Expected Output Examples
+## Interactive Workflows
 
-### Clean Status
+Run `zai-git` without arguments and verify the following menu operations:
 
-```
-Repository Status
-═══════════════════
-Branch: main
-Unpushed commits: 0
-No changes to commit
-```
+* List, create, switch, and delete branches
+* View repository status and history
+* List and apply stashes
+* Update application settings
+* Detect and inspect merge conflicts
 
-### Changes Detected
+Use disposable branches and files for destructive workflow testing.
 
-```
-Repository Status
-═══════════════════
-Branch: main
-Added: README.md
-Unpushed commits: 0
-```
+## Verification Checklist
 
-### Smart Push Preview
-
-```
-Smart Push
-═════════════
-Analyzing changes with AI...
-AI Generated: test: add test content
-
-File Changes:
-  Modified (1 file):
-    - README.md
-
-Push to remote? (Y/n):
-```
-
----
-
-## Troubleshooting
-
-| Issue                         | Solution                                            |
-| ----------------------------- | --------------------------------------------------- |
-| `command not found`           | Run `source ~/.bashrc` or restart terminal          |
-| `Not a git repository`        | Ensure you are inside the test directory            |
-| `Java 21+ required`           | Install Java 21 (see INSTALLATION.md)               |
-| `remote hung up unexpectedly` | Skip remote tests or configure HTTPS authentication |
-
----
-
-## Developer Testing
-
-```bash
-# Run unit tests
-./mvnw test
-
-# Build project
-./mvnw clean package -DskipTests
-
-# Build distributable
-./install.sh --build
-```
-
----
-
-## Test Checklist
-
-* [ ] `zai-git status` shows correct output
-* [ ] `zai-git log` displays commit history
-* [ ] `zai-git push` shows preview before execution
-* [ ] Branch operations function correctly
-* [ ] Stash operations work as expected
-* [ ] `zai-git undo` reverts last commit
-* [ ] Project builds successfully
-
----
-
-## Optional: Remote Repository Test
-
-```bash
-# Add remote repository
-git remote add origin https://github.com/YOUR_USERNAME/zai-test.git
-git push -u origin main
-
-# Test remote sync
-zai-git sync
-```
-
----
+* [ ] `zai-git status` reports added, modified, and deleted files accurately
+* [ ] `zai-git log` displays recent commit history
+* [ ] `zai-git push` can push existing local commits when the working tree is clean
+* [ ] A failed push does not discard the local commit
+* [ ] `zai-git stash pop` applies and removes the latest stash
+* [ ] `zai-git undo` retains the changes from the removed commit
+* [ ] Unknown commands return a nonzero process status
+* [ ] `zai-git version` matches the packaged project version
+* [ ] `./mvnw verify` succeeds
 
 ## Support
 
-Email: [info@zaicodelabs.co.za](mailto:info@zaicodelabs.co.za)
-
+Report reproducible defects through [GitHub Issues](https://github.com/ZaiCodeLabs/zai-git/issues).

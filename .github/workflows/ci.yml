@@ -21,7 +21,6 @@ jobs:
           cache: maven
 
       - name: Make mvnw executable
-        run: chmod +x mvnw mvnw.cmd
+        run: chmod +x mvnw
 
-      - run: ./mvnw clean package -DskipTests
-      - run: ./mvnw test
+      - run: ./mvnw verify

@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * ZaiGit - AI-Powered Git Automation
@@ -20,17 +21,27 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class ZaiGitApplication {
 
+	private volatile int exitCode;
+
 	public static void main(String[] args) {
 		// Disable Spring Boot banner for cleaner CLI output
+		if (System.getProperty("debug") == null) {
+			System.setProperty("debug", "false");
+		}
 		SpringApplication app = new SpringApplication(ZaiGitApplication.class);
 		app.setBannerMode(org.springframework.boot.Banner.Mode.OFF);
-		app.run(args);
+		ConfigurableApplicationContext context = app.run(args);
+		int result = context.getBean(ZaiGitApplication.class).exitCode;
+		context.close();
+		if (result != 0) {
+			System.exit(result);
+		}
 	}
 
 	@Bean
 	public CommandLineRunner commandLineRunner(za.co.zaicodelabs.zaigit.cli.GitCLIController controller) {
 		return args -> {
-			controller.run(args);
+			exitCode = controller.run(args);
 		};
 	}
 }

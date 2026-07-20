@@ -1,44 +1,84 @@
 package za.co.zaicodelabs.zaigit.service;
 
+import org.eclipse.jgit.api.Git;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Unit tests for GitService.
- * These tests are designed to work even when not in a Git repository.
- */
 class GitServiceTest {
 
-    private GitService gitService;
+    @TempDir
+    Path tempDir;
 
-    @BeforeEach
-    void setUp() {
-        gitService = new GitService();
+    @Test
+    void reportsAddedModifiedAndRemovedFiles() throws Exception {
+        try (Git ignored = initializeRepository();
+             GitService service = serviceForRepository()) {
+            Path file = tempDir.resolve("example.txt");
+            Files.writeString(file, "first\n");
+            assertTrue(service.getDetailedStatus().untracked.contains("example.txt"));
+
+            service.commit("feat: add example");
+            Files.writeString(file, "second\n");
+            assertTrue(service.getDetailedStatus().modified.contains("example.txt"));
+
+            Files.delete(file);
+            assertTrue(service.getDetailedStatus().missing.contains("example.txt"));
+        }
     }
 
     @Test
-    void testServiceInitialization() {
-        assertNotNull(gitService, "GitService should be initialized");
+    void diffIncludesContentButExcludesSensitiveFiles() throws Exception {
+        try (Git ignored = initializeRepository();
+             GitService service = serviceForRepository()) {
+            Files.writeString(tempDir.resolve("feature.txt"), "useful change\n");
+            service.commit("feat: add feature");
+            Files.writeString(tempDir.resolve("feature.txt"), "meaningful implementation\n");
+            Files.writeString(tempDir.resolve(".env"), "API_SECRET=do-not-send\n");
+
+            String diff = service.getDiff();
+
+            assertTrue(diff.contains("meaningful implementation"));
+            assertFalse(diff.contains("do-not-send"));
+        }
     }
 
     @Test
-    void testGetCurrentBranch_HandlesNonGitDirectory() {
-        String branch = gitService.getCurrentBranch();
+    void stashPopAppliesAndDropsTheStash() throws Exception {
+        try (Git ignored = initializeRepository();
+             GitService service = serviceForRepository()) {
+            Path file = tempDir.resolve("example.txt");
+            Files.writeString(file, "original\n");
+            service.commit("feat: add example");
+            Files.writeString(file, "stashed\n");
 
-        // Branch can be null or "unknown" when not in a git repository
-        // This is expected behavior, not an error
-        assertTrue(
-                branch == null || branch.equals("unknown") || branch.length() > 0,
-                "Branch should be null, 'unknown', or a valid branch name"
-        );
+            service.stashChanges();
+            assertFalse(service.listStashes().contains("No stashes"));
+
+            service.stashPop();
+            assertEquals("stashed\n", Files.readString(file));
+            assertTrue(service.listStashes().contains("No stashes"));
+        }
     }
 
     @Test
-    void testCloseDoesNotThrow() {
-        // Verify close() doesn't throw exception
-        assertDoesNotThrow(() -> gitService.close(),
-                "close() should not throw exception");
+    void rejectsDirectoriesOutsideARepository() {
+        assertThrows(IllegalStateException.class, () -> new GitService(tempDir));
+    }
+
+    private GitService serviceForRepository() {
+        return new GitService(tempDir);
+    }
+
+    private Git initializeRepository() throws Exception {
+        Git git = Git.init().setDirectory(tempDir.toFile()).call();
+        git.getRepository().getConfig().setString("user", null, "name", "ZaiGit Test");
+        git.getRepository().getConfig().setString("user", null, "email", "test@example.com");
+        git.getRepository().getConfig().save();
+        return git;
     }
 }

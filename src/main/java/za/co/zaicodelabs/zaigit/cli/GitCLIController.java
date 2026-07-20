@@ -27,20 +27,19 @@ public class GitCLIController {
         this.scanner = new Scanner(System.in);
     }
 
-    public void run(String[] args) {
+    public int run(String[] args) {
         try {
             if (args.length == 0) {
-                runInteractiveMode();
-            } else {
-                runCommandMode(args);
+                return runInteractiveMode();
             }
+            return runCommandMode(args);
         } catch (Exception e) {
             uiService.error("Error: " + e.getMessage());
-            System.exit(1);
+            return 1;
         }
     }
 
-    private void runInteractiveMode() {
+    private int runInteractiveMode() {
         uiService.printBanner();
 
         while (true) {
@@ -59,14 +58,14 @@ public class GitCLIController {
                 case "9" -> settings();
                 case "0" -> {
                     uiService.success("Thank you for using ZaiGit!");
-                    System.exit(0);
+                    return 0;
                 }
                 default -> uiService.warning("Invalid option. Please try again.");
             }
         }
     }
 
-    private void runCommandMode(String[] args) {
+    private int runCommandMode(String[] args) {
         String command = args[0].toLowerCase();
 
         try {
@@ -74,16 +73,19 @@ public class GitCLIController {
                 case "push" -> {
                     if (args.length > 2 && "-m".equals(args[1])) {
                         String message = args[2];
-                        gitService.commitAndPush(message);
+                        if (gitService.hasChanges()) {
+                            gitService.commit(message);
+                        }
+                        gitService.push();
                         uiService.success(" Changes pushed successfully!");
                     } else {
-                        smartPush();
+                        return smartPush() ? 0 : 1;
                     }
                 }
-                case "pull" -> smartPull();
-                case "status" -> showStatus();
-                case "sync" -> syncRepository();
-                case "log" -> showCommitHistory();
+                case "pull" -> { return smartPull() ? 0 : 1; }
+                case "status" -> { return showStatus() ? 0 : 1; }
+                case "sync" -> { return syncRepository() ? 0 : 1; }
+                case "log" -> { return showCommitHistory() ? 0 : 1; }
                 case "stash" -> {
                     if (args.length > 1 && "pop".equals(args[1])) {
                         gitService.stashPop();
@@ -96,19 +98,21 @@ public class GitCLIController {
                 case "undo" -> undoLastCommit();
                 case "conflicts" -> conflictResolverService.resolveAllConflicts();
                 case "help", "--help", "-h" -> printHelp();
-                case "version", "--version", "-v" -> uiService.info("ZaiGit v1.0.0");
+                case "version", "--version", "-v" -> uiService.info("ZaiGit v" + applicationVersion());
                 default -> {
                     uiService.error("Unknown command: " + command);
                     printHelp();
+                    return 2;
                 }
             }
+            return 0;
         } catch (Exception e) {
             uiService.error("Command failed: " + e.getMessage());
-            e.printStackTrace();
+            return 1;
         }
     }
 
-    private void smartPush() {
+    private boolean smartPush() {
         uiService.section("Smart Push");
 
         try {
@@ -116,7 +120,7 @@ public class GitCLIController {
             if (conflictResolverService.hasConflicts()) {
                 uiService.error("Cannot push: conflicts detected");
                 uiService.info("Resolve conflicts first using option 8 or 'zai-git conflicts'");
-                return;
+                return false;
             }
 
             // Auto-pull first if enabled
@@ -134,38 +138,42 @@ public class GitCLIController {
                     if (resolve.equals("y") || resolve.equals("yes")) {
                         conflictResolverService.resolveAllConflicts();
                     } else {
-                        return;
+                        return false;
                     }
                 }
             }
 
-            // Check for changes
-            if (!gitService.hasChanges()) {
-                uiService.warning("No changes to commit");
-                return;
+            boolean hasChanges = gitService.hasChanges();
+            var unpushedCommits = gitService.getUnpushedCommits();
+
+            if (!hasChanges && unpushedCommits.isEmpty()) {
+                uiService.success("Repository is up to date!");
+                return true;
             }
 
             // Generate AI commit message
-            String commitMessage;
-            if (configService.isAiCommitMessagesEnabled() && ollamaService.isAvailable()) {
-                uiService.progress("Analyzing changes with AI...");
-                String diff = gitService.getDiff();
-                commitMessage = ollamaService.generateCommitMessage(diff);
-                uiService.clearProgress();
-                uiService.success("AI Generated: " + commitMessage);
-            } else {
-                uiService.info("Enter commit message:");
-                commitMessage = scanner.nextLine().trim();
-                if (commitMessage.isEmpty()) {
-                    uiService.warning("Commit message cannot be empty");
-                    return;
+            String commitMessage = null;
+            if (hasChanges) {
+                if (configService.isAiCommitMessagesEnabled() && ollamaService.isAvailable()) {
+                    uiService.progress("Analyzing changes with AI...");
+                    String diff = gitService.getDiff();
+                    commitMessage = ollamaService.generateCommitMessage(diff);
+                    uiService.clearProgress();
+                    uiService.success("AI Generated: " + commitMessage);
+                } else {
+                    uiService.info("Enter commit message:");
+                    commitMessage = scanner.nextLine().trim();
+                    if (commitMessage.isEmpty()) {
+                        uiService.warning("Commit message cannot be empty");
+                        return false;
+                    }
                 }
             }
 
             // Show changes to be pushed
             StatusInfo statusInfo = gitService.getDetailedStatus();
             uiService.printPushPreviewDetailed(
-                    gitService.getUnpushedCommits(),
+                    unpushedCommits,
                     statusInfo
             );
 
@@ -176,22 +184,27 @@ public class GitCLIController {
 
                 if (!confirm.isEmpty() && !confirm.equals("y") && !confirm.equals("yes")) {
                     uiService.warning("Push cancelled");
-                    return;
+                    return false;
                 }
             }
 
             uiService.progress("Pushing changes...");
-            gitService.commitAndPush(commitMessage);
+            if (hasChanges) {
+                gitService.commit(commitMessage);
+            }
+            gitService.push();
             uiService.clearProgress();
             uiService.success(" Push completed successfully!");
+            return true;
 
         } catch (Exception e) {
             uiService.clearProgress();
             uiService.error("Push failed: " + e.getMessage());
+            return false;
         }
     }
 
-    private void smartPull() {
+    private boolean smartPull() {
         uiService.section("Smart Pull");
 
         try {
@@ -209,13 +222,15 @@ public class GitCLIController {
                     conflictResolverService.resolveAllConflicts();
                 }
             }
+            return true;
         } catch (Exception e) {
             uiService.clearProgress();
             uiService.error("Pull failed: " + e.getMessage());
+            return false;
         }
     }
 
-    private void showStatus() {
+    private boolean showStatus() {
         uiService.section("Repository Status");
 
         try {
@@ -227,8 +242,10 @@ public class GitCLIController {
             if (!unpushed.isEmpty()) {
                 System.out.println("\nUnpushed commits: " + unpushed.size());
             }
+            return true;
         } catch (Exception e) {
             uiService.error("Failed to get status: " + e.getMessage());
+            return false;
         }
     }
 
@@ -305,14 +322,16 @@ public class GitCLIController {
         }
     }
 
-    private void showCommitHistory() {
+    private boolean showCommitHistory() {
         uiService.section("Commit History");
 
         try {
             String history = gitService.getCommitHistory(10);
             System.out.println(history);
+            return true;
         } catch (Exception e) {
             uiService.error("Failed: " + e.getMessage());
+            return false;
         }
     }
 
@@ -371,7 +390,7 @@ public class GitCLIController {
         }
     }
 
-    private void syncRepository() {
+    private boolean syncRepository() {
         uiService.section("Sync Repository");
 
         try {
@@ -386,13 +405,15 @@ public class GitCLIController {
             }
 
             if (gitService.hasChanges()) {
-                smartPush();
+                return smartPush();
             } else {
                 uiService.success("Repository is up to date!");
             }
+            return true;
         } catch (Exception e) {
             uiService.clearProgress();
             uiService.error("Sync failed: " + e.getMessage());
+            return false;
         }
     }
 
@@ -522,5 +543,10 @@ public class GitCLIController {
             Built with love by ZaiCode Labs
             https://zaicodelabs.co.za
             """);
+    }
+
+    private String applicationVersion() {
+        String version = GitCLIController.class.getPackage().getImplementationVersion();
+        return version == null ? "development" : version;
     }
 }

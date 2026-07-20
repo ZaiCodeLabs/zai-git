@@ -2,7 +2,6 @@ package za.co.zaicodelabs.zaigit.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -14,16 +13,12 @@ import java.time.Duration;
 @Service
 public class OllamaService {
 
-    @Value("${ollama.url:http://localhost:11434}")
-    private String ollamaUrl;
-
-    @Value("${ollama.model:codellama}")
-    private String model;
-
+    private final ConfigService configService;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
-    public OllamaService() {
+    public OllamaService(ConfigService configService) {
+        this.configService = configService;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
@@ -33,7 +28,7 @@ public class OllamaService {
     public boolean isAvailable() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(ollamaUrl + "/api/tags"))
+                    .uri(endpoint("/api/tags"))
                     .GET()
                     .timeout(Duration.ofSeconds(5))
                     .build();
@@ -71,11 +66,11 @@ public class OllamaService {
                 """.formatted(diff);
 
             String requestBody = objectMapper.writeValueAsString(
-                    new OllamaRequest(model, prompt, false)
+                    new OllamaRequest(configService.getOllamaModel(), prompt, false)
             );
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(ollamaUrl + "/api/generate"))
+                    .uri(endpoint("/api/generate"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .timeout(Duration.ofSeconds(30))
@@ -162,11 +157,11 @@ public class OllamaService {
                 """.formatted(conflictContent);
 
             String requestBody = objectMapper.writeValueAsString(
-                    new OllamaRequest(model, prompt, false)
+                    new OllamaRequest(configService.getOllamaModel(), prompt, false)
             );
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(ollamaUrl + "/api/generate"))
+                    .uri(endpoint("/api/generate"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .timeout(Duration.ofSeconds(30))
@@ -206,4 +201,9 @@ public class OllamaService {
 
     // Inner class for Ollama API request
     private record OllamaRequest(String model, String prompt, boolean stream) {}
+
+    private URI endpoint(String path) {
+        String baseUrl = configService.getOllamaUrl().replaceAll("/+$", "");
+        return URI.create(baseUrl + path);
+    }
 }

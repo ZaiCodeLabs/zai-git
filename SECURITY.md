@@ -1,120 +1,72 @@
 # Security Policy
 
----
-
 ## Supported Versions
 
-| Version | Supported |
-|---------|-----------|
-| 1.0.x   | Yes       |
-| < 1.0   | No        |
+Security fixes are provided for the latest published version of ZaiGit. Users should upgrade to the most recent release before reporting an issue that may already have been corrected.
 
----
+## Reporting a Vulnerability
 
-## Reporting Vulnerabilities
+Do not disclose security vulnerabilities through public GitHub issues, discussions, or pull requests.
 
-Please do not report security vulnerabilities through public GitHub issues.
+Send reports to [info@zaicodelabs.co.za](mailto:info@zaicodelabs.co.za). An initial response is normally provided within 48 hours.
 
-**Contact:** info@zaicodelabs.co.za  
-**Response Time:** Within 48 hours
+Include the following information when available:
 
-### Please include the following details:
-- Type of issue (e.g., buffer overflow, injection, XSS)
-- Affected file paths and line numbers
-- Step-by-step reproduction instructions
-- Proof-of-concept (if available)
-- Impact assessment
+* A description of the vulnerability and affected component
+* The ZaiGit, Java, and operating system versions
+* Reproduction instructions
+* A minimal proof of concept
+* The potential impact
+* Any suggested remediation
 
----
+Remove credentials, access tokens, private repository content, and other sensitive information that is not necessary for investigation.
 
-## Our Response Process
+## Response Process
 
-1. **Acknowledge** – Within 48 hours
-2. **Assess** – Determine severity and impact
-3. **Remediate** – Apply fixes to supported versions
-4. **Coordinate** – Align disclosure timeline with reporter
-5. **Credit** – Acknowledge reporter (optional anonymity)
+The maintainers will:
 
----
+1. Acknowledge receipt of the report.
+2. Validate the issue and assess its impact.
+3. Develop and test a remediation.
+4. Coordinate a disclosure timeline with the reporter.
+5. Publish an update and security guidance when appropriate.
 
-## Security Model
+Reporter credit is provided with permission.
 
-- Local-only processing (no external code transmission)
-- Uses existing Git authentication (SSH or Personal Access Tokens)
-- Does not store credentials
-- Configuration stored at `~/.zaigit/config.json` with restricted permissions
-- Explicit user confirmation required before push operations
-- Built on actively maintained dependencies (JGit, Spring Boot)
+## Security Considerations
 
----
+ZaiGit operates on the repository from which it is launched and performs state changing Git operations, including staging, committing, pulling, pushing, stashing, resetting, and branch deletion.
 
-## Out of Scope (Non-Goals)
+ZaiGit relies on the Git authentication and remote configuration already present on the system. It does not provide a credential store. Users should use SSH keys or a reputable credential helper and should not embed access tokens in remote URLs.
 
-ZaiGit does not:
+When commit message generation is enabled, repository diff content is sent to the configured Ollama endpoint. Sensitive looking file paths are excluded, but this filtering cannot guarantee that ordinary source files contain no confidential data. Users are responsible for securing the endpoint and reviewing repository content before enabling the feature. Keeping Ollama bound to a trusted local interface is recommended.
 
-- Store user credentials
-- Transmit source code to external services
-- Modify files without user confirmation
-- Execute repository code
-- Access files outside the working directory
-- Collect telemetry or usage data
+Configuration is stored in `~/.zaigit/config.json`. Access to this file is governed by the operating system, directory permissions, and the user account under which ZaiGit runs.
 
----
+## User Responsibilities
 
-## User Security Best Practices
+* Review repository changes before confirming state changing operations.
+* Maintain current backups and remote copies of important repositories.
+* Protect Git credentials and SSH private keys.
+* Keep Java, Git, Ollama, and ZaiGit updated.
+* Use ZaiGit only in trusted repositories.
+* Verify the configured Ollama endpoint before enabling commit message generation.
+* Inspect generated commit messages before accepting them.
 
-- Keep ZaiGit updated to the latest version
-- Protect Git credentials and SSH keys
-- Review all changes before confirming pushes
-- Restrict Ollama to localhost if enabled
-- Use ZaiGit within trusted repositories
+## Scope
 
----
+Reports concerning unauthorized file access, credential exposure, unsafe Git state changes, command execution, dependency vulnerabilities, or unintended disclosure to the configured model endpoint are within scope when they can be reproduced in a supported version.
 
-## Known Limitations
+General Git behavior, insecure user supplied remote URLs, compromised local accounts, and vulnerabilities in separately operated services may fall outside the project scope unless ZaiGit materially contributes to the issue.
 
-The following are expected behaviors and not considered vulnerabilities:
+## Disclosure
 
-1. Git authentication relies on system configuration
-2. Local file access is required for Git operations
-3. Ollama security depends on user configuration
-
----
-
-## Dependencies
-
-| Library       | Maintainer   | Security Advisory |
-|--------------|--------------|-------------------|
-| JGit         | Eclipse      | eclipse.org/security |
-| Spring Boot  | VMware       | spring.io/security |
-| Jackson      | FasterXML    | cowtowncoder.com |
-
----
-
-## Disclosure Policy
-
-- Maximum disclosure window: 90 days from initial report
-- Critical vulnerabilities may follow an accelerated timeline
-- Disclosure is coordinated with the reporting party
-
----
-
-## Compliance & Privacy
-
-- No telemetry or user tracking
-- No external data transmission
-- Fully local processing model
-- Open-source and publicly auditable
-
----
+The preferred disclosure period is no more than 90 days from confirmation of a vulnerability. Critical issues may require a shorter timeline. Disclosure timing will be coordinated with the reporter when practical.
 
 ## Contact
 
-General: info@zaicodelabs.co.za  
-Website: https://zaicodelabs.co.za
+Security reports: [info@zaicodelabs.co.za](mailto:info@zaicodelabs.co.za)
 
----
+Website: [zaicodelabs.co.za](https://zaicodelabs.co.za)
 
-**Last Updated:** March 2026  
-**ZaiCode Labs (Pty) Ltd**  
-South Africa
+Last reviewed: July 2026
